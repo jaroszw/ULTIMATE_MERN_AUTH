@@ -2,7 +2,7 @@ const express = require("express");
 const morgan = require("morgan");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const { application } = require("express");
+const authRouter = require("./routes/auth.route.js");
 
 const app = express();
 
@@ -18,6 +18,8 @@ if (process.env.NODE_ENV === "development") {
   );
   app.use(morgan("dev"));
 }
+
+app.use("/auth", authRouter);
 
 app.use((req, res, next) => {
   res.status(404).json({
