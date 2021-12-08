@@ -1,24 +1,27 @@
-const User = require('../models/auth.model');
-const expressJwt = require('express-jwt');
-const _ = require('lodash');
-const { OAuth2Client } = require('google-auth-library');
-const fetch = require('node-fetch');
+const User = require("../models/auth.model");
+const expressJwt = require("express-jwt");
+const _ = require("lodash");
+const { OAuth2Client } = require("google-auth-library");
+const fetch = require("node-fetch");
 
-const { body, validationResult } = require('express-validator');
-const jwt = require('jsonwebtoken');
-const expressJWT = require('express-jwt');
-
-// Mailer client
-const sgMail = require('@sendgrid/mail');
-
-sgMail.setApiKey(process.env.MAIL_KEY);
+const { body, validationResult } = require("express-validator");
+const jwt = require("jsonwebtoken");
+const expressJWT = require("express-jwt");
+require("dotenv").config();
 
 //Custom error handler to get useful error from database errors
-const { errorHandler } = require('../helpers/dbErrorHandling');
+
+// Mailer client
+const { errorHandler } = require("../helpers/dbErrorHandling");
+const sgMail = require("@sendgrid/mail");
+const { getMaxListeners } = require("../models/auth.model");
+sgMail.setApiKey(process.env.EMAIL_KEY);
+
+console.log("EMAIL_KEY", process.env.EMAIL_KEY);
+console.log("PORT", process.env.PORT);
 
 exports.registerController = async (req, res) => {
   const { name, email, password } = req.body;
-
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -31,7 +34,7 @@ exports.registerController = async (req, res) => {
 
     if (user) {
       return res.status(400).json({
-        error: 'Email is taken',
+        error: "Email is taken",
       });
     }
   }
@@ -44,20 +47,35 @@ exports.registerController = async (req, res) => {
     },
     process.env.JWT_ACCOUNT_ACTIVATION,
     {
-      expiresIn: '15m',
+      expiresIn: "15m",
     }
   );
 
   const emailData = {
     from: process.env.EMAIL_FROM,
-    to: to,
-    subject: 'Account activation link',
+    to: email,
+    subject: "Account activation link",
     html: `
-      <h1>Pleace click to link to activate</h1>
-      <p>${process.env.CLIENT_URL}/users/activate/${token}</p>
-      <hr/>
-      <p>This email contain sensitive info</p>
-      <p>${process.env.CLIENT_URL}</p>
+    <h1>Please use the following to activate your account</h1>
+    <p>${process.env.CLIENT_URL}/users/activate/${token}</p>
+    <hr />
+    <p>This email may containe sensetive information</p>
+    <p>${process.env.CLIENT_URL}</p>
     `,
   };
+
+  sgMail
+    .send(emailData)
+    .then((sent) => {
+      return res.json({
+        message: `Email has been sent to ${email}`,
+      });
+    })
+    .catch((err) => {
+      return res.status(400).json({
+        success: false,
+        errors: errorHandler(err),
+        err: err.response.body,
+      });
+    });
 };

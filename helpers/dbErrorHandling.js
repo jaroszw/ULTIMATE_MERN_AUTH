@@ -1,31 +1,35 @@
-'use strict';
-
-/* Get error from error field*/
-
 const uniqueMessage = (error) => {
   let output;
   try {
-    let fieldName = error.message.split('.$')[1];
-    field = field.split(' dub key')[0];
-    field = field.substring(0, field.lastIndexOf('_'));
-    req.flash('errors', [
+    let fieldName = error.message.split(".$")[1];
+    field = field.split(" dup key")[0];
+    field = field.substring(0, field.lastIndexOf("_"));
+    req.flash("errors", [
       {
-        message: 'An account with this ' + field + 'already exists',
+        msg: "An account with this " + field + " already exists.",
       },
     ]);
     output =
-      fieldName.charAt(0).toUppecase() + fieldName.slice(1) + ' already exists';
-  } catch (error) {
-    output = 'already exists';
+      fieldName.charAt(0).toUpperCase() +
+      fieldName.slice(1) +
+      " already exists";
+  } catch (ex) {
+    output = "already exists";
   }
+
+  return output;
 };
 
-/*
-Get the error message from error object
-*/
-
+/**
+ * Get the erroror message from error object
+ */
 exports.errorHandler = (error) => {
-  let message = '';
+  let message = "";
+
+  if (error.response.headers.server === "nginx") {
+    console.log("ERROR FROM SENDER", error.response.body);
+  }
+
   if (error.code) {
     switch (error.code) {
       case 11000:
@@ -33,14 +37,14 @@ exports.errorHandler = (error) => {
         message = uniqueMessage(error);
         break;
       default:
-        message = 'Something went wrong';
+        message = "Something went wrong";
     }
   } else {
-    for (let errorName in error.errors) {
-      if (error.errors[errorName].message) {
-        message = error.errors[errorName].message;
-      }
+    for (let errorName in error.errorors) {
+      if (error.errorors[errorName].message)
+        message = error.errorors[errorName].message;
     }
   }
+
   return message;
 };
