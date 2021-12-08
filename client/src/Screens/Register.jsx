@@ -1,10 +1,9 @@
-import React, { useState } from "react";
-import authSvg from "../assets/auth.svg";
+import React, { useEffect, useState } from "react";
+import authSvg from "../assests/auth.svg";
 import { ToastContainer, toast } from "react-toastify";
 import { authenticate, isAuth } from "../helpers/auth";
 import axios from "axios";
-import { Redirect } from "react-router-dom";
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -16,10 +15,17 @@ const Register = () => {
   });
 
   const { email, name, password1, password2, textChange } = formData;
+  let navigate = useNavigate();
+
+  // const [isAuth, setIsAuth] = useState(false);
 
   const handleChange = (text) => (e) => {
     setFormData({ ...formData, [text]: e.target.value });
   };
+
+  useEffect(() => {
+    isAuth() && navigate("../", { replace: true });
+  }, [navigate]);
 
   const hadnleSubmit = async (e) => {
     e.preventDefault();
@@ -44,17 +50,32 @@ const Register = () => {
 
           toast.success(res.data.message);
         } catch (error) {
-          toast.error(error.response.data.error);
+          toast(error.response.data.error, {
+            position: "top-right",
+            autoClose: 5000,
+            hideProgressBar: false,
+            closeOnClick: true,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+          });
         }
       } else {
-        toast.error("Password don't match");
+        toast("Password don't match", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+        });
       }
     } else {
-      toast.error("Please filla all fields");
+      toast.error("Lorem ipsum dolor");
     }
   };
 
-  //   {isAuth() ? <Redirect to="/" /> : null}
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900 flex justify-center">
       <ToastContainer />
@@ -64,7 +85,6 @@ const Register = () => {
             <h1 className="text-2xl xl:text-3xl font-extrabold">
               Sign Up for Congar
             </h1>
-
             <form
               className="w-full flex-1 mt-8 text-indigo-500"
               onSubmit={hadnleSubmit}
@@ -132,7 +152,6 @@ const Register = () => {
           ></div>
         </div>
       </div>
-      ;
     </div>
   );
 };
