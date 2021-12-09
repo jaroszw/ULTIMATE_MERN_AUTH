@@ -14,19 +14,16 @@ const { errorHandler } = require("../helpers/dbErrorHandling");
 
 // Mailer client
 const sgMail = require("@sendgrid/mail");
-const { getMaxListeners } = require("../models/auth.model");
 sgMail.setApiKey(process.env.EMAIL_KEY);
 
 exports.registerController = async (req, res) => {
   const { name, email, password } = req.body;
   const errors = validationResult(req);
 
-  console.log("CLIENT URL", process.env.CLIENT_URL);
-
   if (!errors.isEmpty()) {
     const firstError = errors.array().map((error) => error.msg)[0];
     return res.status(200).json({
-      error: firstError,
+      firstEror: firstError,
       err: errors,
     });
   } else {
@@ -44,10 +41,10 @@ exports.registerController = async (req, res) => {
       email,
       password,
     },
-    process.env.JWT_ACCOUNT_ACTIVATION,
-    {
-      expiresIn: "15m",
-    }
+    process.env.JWT_ACCOUNT_ACTIVATION
+    // {
+    //   expiresIn: "15m",
+    // }
   );
 
   const emailData = {
@@ -56,7 +53,7 @@ exports.registerController = async (req, res) => {
     subject: "Account activation link",
     html: `
     <h1>Please use the following to activate your account</h1>
-    <p>http://localhost:5000/api/activation/${token}</p>
+    <p>http://localhost:3000/user/activation/${token}</p>
     <hr />
     <p>This email may containe sensetive information</p>
     <p>${process.env.CLIENT_URL}</p>
@@ -74,16 +71,14 @@ exports.registerController = async (req, res) => {
       return res.status(400).json({
         success: false,
         errors: errorHandler(err),
-        err: err.response.body,
-        error: err,
       });
     });
 };
 
 exports.activationController = async (req, res) => {
   const { token } = req.body;
-
-  console.log("CONFIRM", token);
+  console.log("FROM CONTROLLER", "activation");
+  console.log(token);
 
   if (token) {
     jwt.verify(token, process.env.JWT_ACCOUNT_ACTIVATION, (err, decoded) => {
@@ -93,7 +88,7 @@ exports.activationController = async (req, res) => {
         });
       } else {
         const { email, name, password } = jwt.decode(token);
-        const user = new User({ email, name, password });
+        const user = new User({ name, password, email });
 
         user.save((err, user) => {
           if (err) {
@@ -113,6 +108,56 @@ exports.activationController = async (req, res) => {
   } else {
     return res.json({
       message: "error happening please try again",
+    });
+  }
+};
+
+exports.loginController = (req, res) => {
+  const { email, password } = req.body;
+
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    const firstError = errors.array().map((error) => error.msg)[0];
+    return res.status(200).json({
+      firstEror: firstError,
+      err: errors,
+    });
+  } else {
+    User.findOne({ email }).exec((err, user) => {
+      if (err || !user) {
+        return res.status(400).json({
+          message: "User with this email does not exists. Please sign up first",
+          error: err,
+        });
+      }
+
+      if (!user.authenticate(password)) {
+        return res.status(400).json({
+          message: "Failed credentials",
+        });
+      }
+
+      const token = jwt.sign(
+        {
+          _id: user._id,
+        },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "7d",
+        }
+      );
+
+      const { _id, name, email, role } = user;
+      return res.json({
+        token,
+        user: {
+          _id,
+          name,
+          email,
+          role,
+        },
+      });
     });
   }
 };

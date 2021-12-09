@@ -26,11 +26,6 @@ const uniqueMessage = (error) => {
  */
 exports.errorHandler = (error) => {
   let message = "";
-
-  if (error.response.headers.server === "nginx") {
-    console.log("ERROR FROM SENDER", error.response.body);
-  }
-
   if (error.code) {
     switch (error.code) {
       case 11000:

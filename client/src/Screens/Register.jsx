@@ -31,15 +31,13 @@ const Register = () => {
     e.preventDefault();
     if (name && email && password1) {
       if (password1 === password2) {
+        console.log(name, email, password1, password2);
         try {
           const res = await axios.post(`http://localhost:5000/api/register`, {
             name,
             email,
-            password1,
-            password2,
+            password: password1,
           });
-
-          console.log(res);
 
           setFormData({
             name: "",

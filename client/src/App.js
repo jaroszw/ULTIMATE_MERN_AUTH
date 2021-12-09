@@ -5,11 +5,11 @@ function App() {
   useEffect(() => {
     const getError = async () => {
       try {
-        const res = await axios.post("http://localhost:5000/api/register", {
+        const res = await axios.post("http://localhost:5000/api/login", {
           email: "jaroszw@gmail.com",
-          name: "Vandal",
-          password: "123456",
+          password: 123456,
         });
+
         console.log(res);
       } catch (error) {
         console.dir(error);
