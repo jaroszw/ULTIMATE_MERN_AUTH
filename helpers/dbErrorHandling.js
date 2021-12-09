@@ -1,5 +1,6 @@
 const uniqueMessage = (error) => {
   let output;
+
   try {
     let fieldName = error.message.split(".$")[1];
     field = field.split(" dup key")[0];

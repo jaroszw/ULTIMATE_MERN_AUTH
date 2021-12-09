@@ -28,6 +28,13 @@ app.use(bodyParser.json());
 // }
 
 app.use("/api", authRouter);
+
+app.get("/", (req, res) => {
+  res.json({
+    message: "This is main page",
+  });
+});
+
 app.use((req, res, next) => {
   res.status(404).json({
     success: false,
