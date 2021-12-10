@@ -4,11 +4,10 @@ import { ToastContainer, toast } from "react-toastify";
 import axios from "axios";
 import jwt from "jsonwebtoken";
 import { authenticate, isAuth } from "../helpers/auth";
-import { Link, useParams } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 
 const Activate = () => {
   const params = useParams();
-  console.log(params);
   const [formData, setFormData] = useState({
     name: "",
     token: "",
@@ -23,11 +22,12 @@ const Activate = () => {
     }
   }, []);
 
+  const navigate = useNavigate();
+
   const { name, token, show } = formData;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("Activation");
 
     try {
       const res = await axios.post(
@@ -43,15 +43,14 @@ const Activate = () => {
         show: false,
       });
 
-      console.log(res);
+      navigate("/login");
+
       toast.success(res.data.message);
     } catch (error) {
       toast.error(error.response.data.errors);
+      console.dir(error);
     }
   };
-  //   {
-  //     isAuth() ? <Redirect to="/" /> : null;
-  //   }
 
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900 flex justify-center">

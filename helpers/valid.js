@@ -1,13 +1,10 @@
 const { check } = require("express-validator");
 
 exports.validSign = [
-  check("name", "Name is required")
+  check("name")
     .notEmpty()
-    .isLength({
-      min: 4,
-      max: 32,
-    })
-    .withMessage("name must be between 3 to 32 characters"),
+    .isLength({ min: 4, max: 32 })
+    .withMessage("Is required and must be between 3 to 32 characters"),
   check("email").isEmail().withMessage("Must be a valid email address"),
   check("password", "password is required").notEmpty(),
   check("password")

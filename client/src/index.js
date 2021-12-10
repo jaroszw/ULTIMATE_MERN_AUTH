@@ -14,7 +14,7 @@ ReactDOM.render(
       <Route path="/" element={<App />} />
       <Route path="/register" exact element={<Register />} />;
       <Route path="/login" exact element={<Login />} />;
-      <Route path="/user/activation/:token" exact element={<Activate />} />
+      <Route path="/users/activation/:token" exact element={<Activate />} />
     </Routes>
   </BrowserRouter>,
   document.getElementById("root")

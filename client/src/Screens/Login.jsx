@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import authSvg from "../assests/auth.svg";
 import { ToastContainer, toast } from "react-toastify";
 import { authenticate, isAuth } from "../helpers/auth";
@@ -7,12 +7,16 @@ import { useNavigate, Link } from "react-router-dom";
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: "",
-    password: "",
+    email: "jaroszw@gmail.com",
+    password: "123456",
     textChange: "Sign In",
   });
   const navigate = useNavigate();
   const { email, password, textChange } = formData;
+
+  useEffect(() => {
+    isAuth() !== undefined && navigate("/");
+  }, []);
 
   const handleChange = (text) => (e) => {
     setFormData({ ...formData, [text]: e.target.value });
@@ -56,7 +60,6 @@ const Login = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 text-gray-900 flex justify-center">
-      {isAuth() ? navigate("/") : null}
       <ToastContainer />
       <div className="max-w-screen-xl m-0 sm:m-20 bg-white shadow sm:rounded-lg flex justify-center flex-1">
         <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">

@@ -1,6 +1,10 @@
+"use strict";
+
+/**
+ * Get unique error field name
+ */
 const uniqueMessage = (error) => {
   let output;
-
   try {
     let fieldName = error.message.split(".$")[1];
     field = field.split(" dup key")[0];
@@ -26,6 +30,7 @@ const uniqueMessage = (error) => {
  */
 exports.errorHandler = (error) => {
   let message = "";
+
   if (error.code) {
     switch (error.code) {
       case 11000:
@@ -40,6 +45,35 @@ exports.errorHandler = (error) => {
       if (error.errorors[errorName].message)
         message = error.errorors[errorName].message;
     }
+  }
+
+  return message;
+};
+
+exports.customHandler = (error) => {
+  let message;
+  if (error.code) {
+    switch (error.code) {
+      case 11000:
+      case 11001:
+        message = uniqueMessage(error);
+        break;
+      default:
+        message = "Something went wrong";
+    }
+  } else {
+    const errMess = error.message;
+    let errObj = {};
+    const sub = errMess
+      .substring(errMess.indexOf(":") + 1)
+      .trim()
+      .split(",")
+      .map((ell) => ell.trim());
+    sub.forEach((err) => {
+      const [key, value] = err.split(":").map((err) => err.trim());
+      return (errObj[key] = value);
+    });
+    message = sub;
   }
 
   return message;

@@ -7,18 +7,18 @@ const userScheama = new mongoose.Schema(
     email: {
       type: String,
       trim: true,
-      required: true,
+      required: [true, "Email is required - custom message"],
       unique: true,
       lowercase: true,
     },
     name: {
       type: String,
       trim: true,
-      required: true,
+      required: [true, "Name is required - custom message"],
     },
     hashed_password: {
       type: String,
-      required: true,
+      required: [true, "Password is required - custom message"],
     },
     salt: String,
     role: {
@@ -29,6 +29,7 @@ const userScheama = new mongoose.Schema(
       data: String,
       default: "",
     },
+    testValue: String,
   },
   {
     timestamps: true,
@@ -44,7 +45,7 @@ userScheama
     this.hashed_password = this.encryptPassword(password);
   })
   .get(function () {
-    return this._password;
+    return this.password;
   });
 
 // methods

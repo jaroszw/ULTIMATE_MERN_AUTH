@@ -17,8 +17,6 @@ const Register = () => {
   const { email, name, password1, password2, textChange } = formData;
   let navigate = useNavigate();
 
-  // const [isAuth, setIsAuth] = useState(false);
-
   const handleChange = (text) => (e) => {
     setFormData({ ...formData, [text]: e.target.value });
   };
@@ -31,7 +29,6 @@ const Register = () => {
     e.preventDefault();
     if (name && email && password1) {
       if (password1 === password2) {
-        console.log(name, email, password1, password2);
         try {
           const res = await axios.post(`http://localhost:5000/api/register`, {
             name,
@@ -48,6 +45,7 @@ const Register = () => {
 
           toast.success(res.data.message);
         } catch (error) {
+          console.dir(error);
           toast(error.response.data.error, {
             position: "top-right",
             autoClose: 5000,
