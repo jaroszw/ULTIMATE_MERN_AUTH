@@ -167,16 +167,65 @@ exports.loginController = (req, res) => {
   }
 };
 
-exports.forgotPasswordController = (req, res) => {
+exports.forgotPasswordController = async (req, res) => {
   const { email } = req.body;
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
-    console.log("EMPTY");
     const firstError = errors.array().map((error) => error.msg)[0];
-    return res.status(200).json({
+    return res.status(422).json({
       firstEror: firstError,
       err: errors,
     });
+  } else {
+    try {
+      const user = User.findOne({ email });
+
+      if (!user) {
+        return res.status(400).json({
+          message: "User with thos email does not exist",
+          error: err,
+        });
+      }
+
+      const token = jwt.sign(
+        {
+          _id: user._id,
+        },
+        process.env.JWT_RESET_PASSWORD,
+        {
+          expiresIn: "10m",
+        }
+      );
+
+      const emailData = {
+        from: process.env.EMAIL_FROM,
+        to: email,
+        subject: "Password reset link",
+        html: `
+                      <h1>Please use the following to reset your pasword</h1>
+                      <p>${process.env.CLIENT_URL}/users/password/reset/${token}</p>
+                      <hr />
+                      <p>This email may containe sensetive information</p>
+                      <p>${process.env.CLIENT_URL}</p>
+                  `,
+      };
+
+      const updatedUserLink = await user.updateOne({
+        resetPasswordLink: token,
+      });
+
+      sgMail.send(emailData).then((sent) => {
+        return res.json({
+          message: `Email has been sent to ${email}. Follow the instructions to activate your account`,
+        });
+      });
+    } catch (error) {
+      console.log(error);
+    }
   }
+};
+
+exports.resetPasswordController = (req, res) => {
+  console.log("reseting", req.body);
 };

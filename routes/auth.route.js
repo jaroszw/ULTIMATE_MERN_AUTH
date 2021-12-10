@@ -5,6 +5,7 @@ const {
   activationController,
   loginController,
   forgotPasswordController,
+  resetPasswordController,
 } = require("../controllers/auth.controler.js");
 const {
   validSign,
@@ -21,5 +22,6 @@ router.put(
   forgotPasswordValidator,
   forgotPasswordController
 );
+router.put("/ressetpassword", resetPasswordValidator, resetPasswordController);
 
 module.exports = router;
