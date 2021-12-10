@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import authSvg from "../assests/auth.svg";
+import authSvg from "../assests/login.svg";
 import { ToastContainer, toast } from "react-toastify";
 import { authenticate, isAuth } from "../helpers/auth";
 import axios from "axios";
@@ -26,7 +26,8 @@ const Login = () => {
     e.preventDefault();
     if (email && password) {
       try {
-        const res = await axios.post(`http://localhost:5000/api/login`, {
+        console.log("PGON PROCESS", process.env.REACT_APP_API_URL);
+        const res = await axios.post(`${process.env.REACT_APP_API_URL}/login`, {
           email,
           password: password,
         });

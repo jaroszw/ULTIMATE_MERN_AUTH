@@ -30,11 +30,14 @@ const Register = () => {
     if (name && email && password1) {
       if (password1 === password2) {
         try {
-          const res = await axios.post(`http://localhost:5000/api/register`, {
-            name,
-            email,
-            password: password1,
-          });
+          const res = await axios.post(
+            `${process.env.REACT_APP_API_URL}/register`,
+            {
+              name,
+              email,
+              password: password1,
+            }
+          );
 
           setFormData({
             name: "",

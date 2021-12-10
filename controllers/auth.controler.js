@@ -166,3 +166,17 @@ exports.loginController = (req, res) => {
     });
   }
 };
+
+exports.forgotPasswordController = (req, res) => {
+  const { email } = req.body;
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    console.log("EMPTY");
+    const firstError = errors.array().map((error) => error.msg)[0];
+    return res.status(200).json({
+      firstEror: firstError,
+      err: errors,
+    });
+  }
+};

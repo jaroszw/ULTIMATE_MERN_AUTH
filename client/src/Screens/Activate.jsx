@@ -31,8 +31,7 @@ const Activate = () => {
 
     try {
       const res = await axios.post(
-        // `${process.env.REACT_APP_API_URL}/activation`,
-        `http://localhost:5000/api/activation`,
+        `${process.env.REACT_APP_API_URL}/activation`,
         {
           token,
         }
@@ -71,7 +70,6 @@ const Activate = () => {
                   type="submit"
                   className="mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
                 >
-                  <i className="fas fa-user-plus fa 1x w-6  -ml-2" />
                   <span className="ml-3">Activate your Account</span>
                 </button>
               </div>
