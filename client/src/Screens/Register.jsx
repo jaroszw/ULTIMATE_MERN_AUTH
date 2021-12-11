@@ -1,17 +1,18 @@
-import React, { useEffect, useState } from "react";
-import authSvg from "../assests/auth.svg";
-import { ToastContainer, toast } from "react-toastify";
-import { authenticate, isAuth } from "../helpers/auth";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import authSvg from '../assests/auth.svg';
+import { ToastContainer, toast } from 'react-toastify';
+import { authenticate, isAuth } from '../helpers/auth';
+import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password1: "",
-    password2: "",
-    textChange: "Sign Up",
+    name: 'Vandal',
+    email: 'jaroszw@gmail.com',
+    password1: '123456',
+    password2: '123456',
+    textChange: 'Sign Up',
   });
 
   const { email, name, password1, password2, textChange } = formData;
@@ -22,7 +23,7 @@ const Register = () => {
   };
 
   useEffect(() => {
-    isAuth() && navigate("../", { replace: true });
+    isAuth() && navigate('../', { replace: true });
   }, [navigate]);
 
   const hadnleSubmit = async (e) => {
@@ -40,38 +41,22 @@ const Register = () => {
           );
 
           setFormData({
-            name: "",
-            email: "",
-            password1: "",
-            password2: "",
+            name: '',
+            email: '',
+            password1: '',
+            password2: '',
           });
 
           toast.success(res.data.message);
         } catch (error) {
           console.dir(error);
-          toast(error.response.data.error, {
-            position: "top-right",
-            autoClose: 5000,
-            hideProgressBar: false,
-            closeOnClick: true,
-            pauseOnHover: true,
-            draggable: true,
-            progress: undefined,
-          });
+          toast(error.response.data.message.toLowerCase(), {});
         }
       } else {
-        toast("Password don't match", {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+        toast("Password don't match");
       }
     } else {
-      toast.error("Lorem ipsum dolor");
+      toast.error('Fill all required information');
     }
   };
 
@@ -93,28 +78,28 @@ const Register = () => {
                   className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
                   type="text"
                   placeholder="Name"
-                  onChange={handleChange("name")}
+                  onChange={handleChange('name')}
                   value={name}
                 />
                 <input
                   className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
                   type="email"
                   placeholder="Email"
-                  onChange={handleChange("email")}
+                  onChange={handleChange('email')}
                   value={email}
                 />
                 <input
                   className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
                   type="password"
                   placeholder="Password"
-                  onChange={handleChange("password1")}
+                  onChange={handleChange('password1')}
                   value={password1}
                 />
                 <input
                   className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
                   type="password"
                   placeholder="Confirm Password"
-                  onChange={handleChange("password2")}
+                  onChange={handleChange('password2')}
                   value={password2}
                 />
                 <button

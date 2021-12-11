@@ -1,13 +1,17 @@
-import React, { useEffect, useState } from "react";
-import authSvg from "../assests/forget.svg";
-import { ToastContainer, toast } from "react-toastify";
-import axios from "axios";
+import React, { useEffect, useState } from 'react';
+import authSvg from '../assests/forget.svg';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
+import axios from 'axios';
 
 const Forget = () => {
   const [formData, setFormData] = useState({
-    email: "jaroszw@gmail.com",
-    textChange: "Submit",
+    email: 'jaroszw@gmail.com',
+    textChange: 'Submit',
   });
+
+  const [error, setError] = useState('');
 
   const { email, textChange } = formData;
 
@@ -18,32 +22,23 @@ const Forget = () => {
   const hadnleSubmit = async (e) => {
     e.preventDefault();
     if (email) {
-      setFormData({ ...formData, textChange: "Submitting" });
+      setFormData({ ...formData, textChange: 'Submitting' });
       try {
-        await axios.put(`${process.env.REACT_APP_API_URL}/forgotpassword`, {
+        await axios.post(`${process.env.REACT_APP_API_URL}/forgotpassword`, {
           email,
         });
 
         setFormData({
           ...formData,
-          email: "",
+          email: '',
         });
 
-        toast.success("Please check your email");
+        toast.success('Please check your email');
       } catch (error) {
-        console.dir(error);
-        toast(error.response.data.error, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+        toast(error.response.data.message);
       }
     } else {
-      toast.error("Please fill email field");
+      toast.error('Please fill email field');
     }
   };
 
@@ -64,7 +59,7 @@ const Forget = () => {
                 className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
                 type="text"
                 placeholder="Email"
-                onChange={handleChange("email")}
+                onChange={handleChange('email')}
                 value={email}
               />
               <button
@@ -74,6 +69,7 @@ const Forget = () => {
                 <i className="fas fa-user-plus fa 1x w-6  -ml-2" />
                 <span className="ml-3">{formData.textChange}</span>
               </button>
+              {error && <p>{}</p>}
             </form>
           </div>
         </div>

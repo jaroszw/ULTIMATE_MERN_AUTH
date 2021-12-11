@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { Link, useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
-import { toast, ToastContainer } from "react-toastify";
-import authSvg from "../assests/reset.svg";
+import React, { useEffect, useState } from 'react';
+import { Link, useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { toast, ToastContainer } from 'react-toastify';
+import authSvg from '../assests/reset.svg';
 
 const ResetPassword = () => {
   const [formData, setFormData] = useState({
-    passwrod1: "",
-    passwrod2: "",
-    token: "",
-    textChange: "submit",
+    password1: 'zzzzzz',
+    password2: 'zzzzzz',
+    token: '',
+    textChange: 'submit',
   });
 
   const params = useParams();
@@ -28,16 +28,25 @@ const ResetPassword = () => {
     setFormData({ ...formData, [text]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-
     if (password1 === password2 && password1 && password2) {
-      setFormData({ ...formData, textChange: "submiting" });
+      try {
+        setFormData({ ...formData, textChange: 'submiting' });
+        const res = await axios.put(
+          `${process.env.REACT_APP_API_URL}/ressetpassword`,
+          {
+            newPassword: password1,
+            resetPasswordLink: token,
+          }
+        );
 
-      axios.put(`${process.env.REACT_APP_API_URL}/ressetpassword`, {
-        newPassword: password1,
-        resetPasswordLink: token,
-      });
+        toast.success(res.data.message);
+      } catch (error) {
+        toast.error(error.response.data.message);
+      }
+    } else {
+      toast.error('Passwords need to be equal and at least 6 characters');
     }
   };
 
@@ -59,14 +68,14 @@ const ResetPassword = () => {
                   className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
                   type="password"
                   placeholder="password"
-                  onChange={handleChange("password1")}
+                  onChange={handleChange('password1')}
                   value={password1}
                 />
                 <input
                   className="w-full mt-5 px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
                   type="password"
                   placeholder="Confirm password"
-                  onChange={handleChange("password2")}
+                  onChange={handleChange('password2')}
                   value={password2}
                 />
                 <button
@@ -74,7 +83,7 @@ const ResetPassword = () => {
                   className="mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none"
                 >
                   <i className="fas fa-sign-in-alt  w-6  -ml-2" />
-                  <span className="ml-3">Submit</span>
+                  <span className="ml-3">{textChange}</span>
                 </button>
               </form>
             </div>

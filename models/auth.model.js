@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const crypto = require("crypto");
+const mongoose = require('mongoose');
+const crypto = require('crypto');
 
 // user schema
 const userScheama = new mongoose.Schema(
@@ -7,27 +7,27 @@ const userScheama = new mongoose.Schema(
     email: {
       type: String,
       trim: true,
-      required: [true, "Email is required - custom message"],
+      required: [true, 'Email is required - custom message'],
       unique: true,
       lowercase: true,
     },
     name: {
       type: String,
       trim: true,
-      required: [true, "Name is required - custom message"],
+      required: [true, 'Name is required - custom message'],
     },
     hashed_password: {
       type: String,
-      required: [true, "Password is required - custom message"],
+      required: [true, 'Password is required - custom message'],
     },
     salt: String,
     role: {
       type: String,
-      default: "subscriber",
+      default: 'subscriber',
     },
     resetPasswordLink: {
       data: String,
-      default: "",
+      default: '',
     },
     testValue: String,
   },
@@ -38,7 +38,7 @@ const userScheama = new mongoose.Schema(
 
 // virtual
 userScheama
-  .virtual("password")
+  .virtual('password')
   .set(function (password) {
     this._password = password;
     this.salt = this.makeSalt();
@@ -50,25 +50,32 @@ userScheama
 
 // methods
 userScheama.methods = {
-  authenticate: function (plainText) {
+  authenticate: async function (plainText) {
     return this.encryptPassword(plainText.toString()) === this.hashed_password;
   },
 
   encryptPassword: function (password) {
-    if (!password) return "";
+    if (!password) return '';
     try {
       return crypto
-        .createHmac("sha1", this.salt)
+        .createHmac('sha1', this.salt)
         .update(password)
-        .digest("hex");
+        .digest('hex');
     } catch (err) {
-      return "";
+      return '';
     }
   },
 
   makeSalt: function () {
-    return Math.round(new Date().valueOf() * Math.random()) + "";
+    return Math.round(new Date().valueOf() * Math.random()) + '';
+  },
+
+  resetPassword: async function (password) {
+    this._password = password;
+    this.resetPasswordLink = '';
+    this.hashed_password = this.encryptPassword(password.toString());
+    return this.encryptPassword(password.toString()) === this.hashed_password;
   },
 };
 
-module.exports = mongoose.model("User", userScheama);
+module.exports = mongoose.model('User', userScheama);

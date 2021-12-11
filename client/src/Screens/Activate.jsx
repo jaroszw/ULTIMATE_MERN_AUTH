@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from "react";
-import authSvg from "../assests/welcome.svg";
-import { ToastContainer, toast } from "react-toastify";
-import axios from "axios";
-import jwt from "jsonwebtoken";
-import { authenticate, isAuth } from "../helpers/auth";
-import { Link, useParams, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import authSvg from '../assests/welcome.svg';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios';
+import jwt from 'jsonwebtoken';
+import { authenticate, isAuth } from '../helpers/auth';
+import { Link, useParams, useNavigate } from 'react-router-dom';
 
 const Activate = () => {
   const params = useParams();
   const [formData, setFormData] = useState({
-    name: "",
-    token: "",
+    token: '',
     show: true,
   });
 
@@ -42,7 +42,7 @@ const Activate = () => {
         show: false,
       });
 
-      navigate("/login");
+      navigate('/login');
 
       toast.success(res.data.message);
     } catch (error) {

@@ -1,20 +1,20 @@
-const express = require("express");
-const morgan = require("morgan");
-const bodyParser = require("body-parser");
-const cors = require("cors");
-const authRouter = require("./routes/auth.route");
-const User = require("./models/auth.model");
-const connectDB = require("./config/db");
+const express = require('express');
+const morgan = require('morgan');
+const bodyParser = require('body-parser');
+const cors = require('cors');
+const authRouter = require('./routes/auth.route');
+const User = require('./models/auth.model');
+const connectDB = require('./config/db');
 
-if (process.env.NODE_ENV !== "production") {
-  require("dotenv").config();
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config({ path: './config/config.env' });
 }
 
 const app = express();
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: 'http://localhost:3000',
     withCredentials: true,
   })
 );
@@ -27,18 +27,18 @@ app.use(bodyParser.json());
 //   app.use(morgan("dev"));
 // }
 
-app.use("/api", authRouter);
+app.use('/api', authRouter);
 
-app.get("/", (req, res) => {
+app.get('/', (req, res) => {
   res.json({
-    message: "This is main page",
+    message: 'This is main page',
   });
 });
 
 app.use((req, res, next) => {
   res.status(404).json({
     success: false,
-    message: "Page not found",
+    message: 'Page not found',
   });
 });
 

@@ -1,21 +1,22 @@
-import React, { useState, useEffect } from "react";
-import authSvg from "../assests/login.svg";
-import { ToastContainer, toast } from "react-toastify";
-import { authenticate, isAuth } from "../helpers/auth";
-import axios from "axios";
-import { useNavigate, Link } from "react-router-dom";
+import React, { useState, useEffect } from 'react';
+import authSvg from '../assests/login.svg';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { authenticate, isAuth } from '../helpers/auth';
+import axios from 'axios';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    email: "jaroszw@gmail.com",
-    password: "123456",
-    textChange: "Sign In",
+    email: 'jaroszw@gmail.com',
+    password: '',
+    textChange: 'Sign In',
   });
   const navigate = useNavigate();
   const { email, password, textChange } = formData;
 
   useEffect(() => {
-    isAuth() !== undefined && navigate("/");
+    isAuth() !== undefined && navigate('/');
   }, []);
 
   const handleChange = (text) => (e) => {
@@ -26,36 +27,28 @@ const Login = () => {
     e.preventDefault();
     if (email && password) {
       try {
-        console.log("PGON PROCESS", process.env.REACT_APP_API_URL);
         const res = await axios.post(`${process.env.REACT_APP_API_URL}/login`, {
           email,
-          password: password,
+          password,
         });
 
         authenticate(res, () => {
           setFormData({
             ...formData,
-            email: "",
-            password: "",
+            email: '',
+            password: '',
           });
-          isAuth() && isAuth().role === "admin"
-            ? navigate("/admin")
-            : navigate("/private");
-          toast("Welcome back");
+          isAuth() && isAuth().role === 'admin'
+            ? navigate('/admin')
+            : navigate('/private');
+          toast.success('Welcome back');
         });
       } catch (error) {
-        toast(error.response.data.error, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-        });
+        console.dir(error);
+        toast(error.response.data.message);
       }
     } else {
-      toast.error("Lorem ipsum dolor");
+      toast.error('Lorem ipsum dolor');
     }
   };
 
@@ -93,14 +86,14 @@ const Login = () => {
                   className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
                   type="email"
                   placeholder="Email"
-                  onChange={handleChange("email")}
+                  onChange={handleChange('email')}
                   value={email}
                 />
                 <input
                   className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white mt-5"
                   type="password"
                   placeholder="Password"
-                  onChange={handleChange("password")}
+                  onChange={handleChange('password')}
                   value={password}
                 />
                 <button

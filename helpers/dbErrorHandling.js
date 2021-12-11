@@ -1,4 +1,4 @@
-"use strict";
+'use strict';
 
 /**
  * Get unique error field name
@@ -6,20 +6,20 @@
 const uniqueMessage = (error) => {
   let output;
   try {
-    let fieldName = error.message.split(".$")[1];
-    field = field.split(" dup key")[0];
-    field = field.substring(0, field.lastIndexOf("_"));
-    req.flash("errors", [
+    let fieldName = error.message.split('.$')[1];
+    field = field.split(' dup key')[0];
+    field = field.substring(0, field.lastIndexOf('_'));
+    req.flash('errors', [
       {
-        msg: "An account with this " + field + " already exists.",
+        msg: 'An account with this ' + field + ' already exists.',
       },
     ]);
     output =
       fieldName.charAt(0).toUpperCase() +
       fieldName.slice(1) +
-      " already exists";
+      ' already exists';
   } catch (ex) {
-    output = "already exists";
+    output = 'already exists';
   }
 
   return output;
@@ -29,7 +29,7 @@ const uniqueMessage = (error) => {
  * Get the erroror message from error object
  */
 exports.errorHandler = (error) => {
-  let message = "";
+  let message = '';
 
   if (error.code) {
     switch (error.code) {
@@ -38,7 +38,7 @@ exports.errorHandler = (error) => {
         message = uniqueMessage(error);
         break;
       default:
-        message = "Something went wrong";
+        message = 'Something went wrong';
     }
   } else {
     for (let errorName in error.errorors) {
@@ -50,31 +50,31 @@ exports.errorHandler = (error) => {
   return message;
 };
 
-exports.customHandler = (error) => {
-  let message;
-  if (error.code) {
-    switch (error.code) {
-      case 11000:
-      case 11001:
-        message = uniqueMessage(error);
-        break;
-      default:
-        message = "Something went wrong";
-    }
-  } else {
-    const errMess = error.message;
-    let errObj = {};
-    const sub = errMess
-      .substring(errMess.indexOf(":") + 1)
-      .trim()
-      .split(",")
-      .map((ell) => ell.trim());
-    sub.forEach((err) => {
-      const [key, value] = err.split(":").map((err) => err.trim());
-      return (errObj[key] = value);
-    });
-    message = sub;
-  }
+// exports.customHandler = (error) => {
+//   let message;
+//   if (error.code) {
+//     switch (error.code) {
+//       case 11000:
+//       case 11001:
+//         message = uniqueMessage(error);
+//         break;
+//       default:
+//         message = 'Something went wrong';
+//     }
+//   } else {
+//     const errMess = error.message;
+//     let errObj = {};
+//     const sub = errMess
+//       .substring(errMess.indexOf(':') + 1)
+//       .trim()
+//       .split(',')
+//       .map((ell) => ell.trim());
+//     sub.forEach((err) => {
+//       const [key, value] = err.split(':').map((err) => err.trim());
+//       return (errObj[key] = value);
+//     });
+//     message = sub;
+//   }
 
-  return message;
-};
+//   return message;
+// };
