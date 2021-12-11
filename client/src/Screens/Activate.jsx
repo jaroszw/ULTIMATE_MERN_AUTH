@@ -4,8 +4,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import jwt from 'jsonwebtoken';
-import { authenticate, isAuth } from '../helpers/auth';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 const Activate = () => {
   const params = useParams();
@@ -20,11 +19,11 @@ const Activate = () => {
     if (token) {
       setFormData({ ...formData, name, token });
     }
-  }, []);
+  }, [formData, params.token]);
 
   const navigate = useNavigate();
 
-  const { name, token, show } = formData;
+  const { name, token } = formData;
 
   const handleSubmit = async (e) => {
     e.preventDefault();

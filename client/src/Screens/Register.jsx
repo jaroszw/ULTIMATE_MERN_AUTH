@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import authSvg from '../assests/auth.svg';
 import { ToastContainer, toast } from 'react-toastify';
-import { authenticate, isAuth } from '../helpers/auth';
+import { isAuth } from '../helpers/auth';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';

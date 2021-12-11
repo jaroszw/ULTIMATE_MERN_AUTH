@@ -8,7 +8,6 @@ const { body, validationResult } = require('express-validator');
 const jwt = require('jsonwebtoken');
 const expressJWT = require('express-jwt');
 require('dotenv').config({ path: './config/config.env' });
-
 //Custom error handler to get useful error from database errors
 const { errorHandler } = require('../helpers/dbErrorHandling');
 
@@ -274,6 +273,51 @@ exports.resetPasswordController = async (req, res) => {
     return res.status(401).json({
       err: error,
       message: error.message,
+    });
+  }
+};
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT);
+
+exports.googleController = async (req, res) => {
+  const { idToken } = req.body;
+
+  const response = await client.verifyIdToken({
+    idToken,
+    audience: process.env.GOOGLE_CLIENT,
+  });
+  const { email, name, email_verified } = response.payload;
+
+  if (email_verified) {
+    let user = await User.findOne({ email });
+
+    if (user) {
+      const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+        expiresIn: '7d',
+      });
+      const { _id, email, name, role } = user;
+      return res.status(200).json({
+        token,
+        user: { _id, email, name, role },
+      });
+    } else {
+      let password = email + process.env.JWT_SECRET;
+      user = new User({ name, email, password });
+
+      const newUser = await user.save();
+      if (newUser) {
+        const token = jwt.sign({ _id: data._id }, process.env.JWT_SECRET, {
+          expiresIn: '7d',
+        });
+        const { _id, email, name, role } = data;
+        return res
+          .status(200)
+          .json({ token, user: { _id, email, name, role } });
+      }
+    }
+  } else {
+    return res.status(400).json({
+      error: 'Google login failed',
     });
   }
 };

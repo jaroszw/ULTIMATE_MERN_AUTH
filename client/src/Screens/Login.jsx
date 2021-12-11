@@ -5,6 +5,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { authenticate, isAuth } from '../helpers/auth';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
+import { GoogleLogin } from 'react-google-login';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -13,14 +14,43 @@ const Login = () => {
     textChange: 'Sign In',
   });
   const navigate = useNavigate();
-  const { email, password, textChange } = formData;
+  const { email, password } = formData;
+
+  const sendGoogleToken = async (tokenId) => {
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/googlelogin`,
+        {
+          idToken: tokenId,
+        }
+      );
+
+      informParent(response);
+      console.log('returned response', response);
+    } catch (error) {
+      console.dir(error);
+      // toast.error(error.response.data.message);
+    }
+  };
+
+  const informParent = (response) => {
+    authenticate(response, () => {
+      isAuth() && isAuth().role === 'admin'
+        ? navigate('/admin')
+        : navigate('/private');
+    });
+  };
 
   useEffect(() => {
     isAuth() !== undefined && navigate('/');
-  }, []);
+  }, [navigate]);
 
   const handleChange = (text) => (e) => {
     setFormData({ ...formData, [text]: e.target.value });
+  };
+
+  const responseGoogle = (response) => {
+    sendGoogleToken(response.tokenId);
   };
 
   const handleSubmit = async (e) => {
@@ -62,22 +92,6 @@ const Login = () => {
               Sign In for Congar
             </h1>
             <div className="w-full flex-1 mt-8 text-indigo-500">
-              <div className="flex flex-col items-center">
-                <a
-                  className="w-full max-w-xs font-bold shadow-sm rounded-lg py-3
-           bg-indigo-100 text-gray-800 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow focus:shadow-sm focus:shadow-outline mt-5"
-                  href="/register"
-                  target="_self"
-                >
-                  <i className="fas fa-user-plus fa 1x w-6  -ml-2 text-indigo-500" />
-                  <span className="ml-4">Sign Up</span>
-                </a>
-              </div>
-              <div className="my-12 border-b text-center">
-                <div className="leading-none px-2 inline-block text-sm text-gray-600 tracking-wide font-medium bg-white transform translate-y-1/2">
-                  Or sign In with e-mail
-                </div>
-              </div>
               <form
                 className="mx-auto max-w-xs relative "
                 onSubmit={handleSubmit}
@@ -110,6 +124,41 @@ const Login = () => {
                   Forget password?
                 </Link>
               </form>
+              <div className="my-12 border-b text-center">
+                <div className="leading-none px-2 inline-block text-sm text-gray-600 tracking-wide font-medium bg-white transform translate-y-1/2">
+                  Or sign In with e-mail
+                </div>
+              </div>
+              <div className="flex flex-col items-center">
+                <GoogleLogin
+                  clientId={`${process.env.REACT_APP_GOOGLE_CLIENT}`}
+                  onSuccess={responseGoogle}
+                  onFailure={responseGoogle}
+                  cookiePolicy={'single_host_origin'}
+                  render={(renderProps) => (
+                    <button
+                      onClick={renderProps.onClick}
+                      disabled={renderProps.disabled}
+                      className="w-full max-w-xs font-bold shadow-sm rounded-lg py-3 bg-indigo-100 text-gray-800 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow focus:shadow-sm focus:shadow-outline"
+                    >
+                      <div className=" p-2 rounded-full ">
+                        <i className="fab fa-google " />
+                      </div>
+                      <span className="ml-4">Sign In with Google</span>
+                    </button>
+                  )}
+                ></GoogleLogin>
+
+                <a
+                  className="w-full max-w-xs font-bold shadow-sm rounded-lg py-3
+           bg-indigo-100 text-gray-800 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow focus:shadow-sm focus:shadow-outline mt-5"
+                  href="/register"
+                  target="_self"
+                >
+                  <i className="fas fa-user-plus fa 1x w-6  -ml-2 text-indigo-500" />
+                  <span className="ml-4">Sign Up</span>
+                </a>
+              </div>
             </div>
           </div>
         </div>

@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
 import { toast, ToastContainer } from 'react-toastify';
 import authSvg from '../assests/reset.svg';
 
 const ResetPassword = () => {
   const [formData, setFormData] = useState({
-    password1: 'zzzzzz',
-    password2: 'zzzzzz',
+    password1: '111111',
+    password2: '111111',
     token: '',
     textChange: 'submit',
   });
@@ -19,7 +19,7 @@ const ResetPassword = () => {
     if (token) {
       setFormData({ ...formData, token });
     }
-  }, []);
+  }, [formData, params.token]);
 
   const { password1, password2, textChange, token } = formData;
 

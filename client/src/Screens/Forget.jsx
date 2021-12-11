@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import authSvg from '../assests/forget.svg';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -11,9 +11,7 @@ const Forget = () => {
     textChange: 'Submit',
   });
 
-  const [error, setError] = useState('');
-
-  const { email, textChange } = formData;
+  const { email } = formData;
 
   const handleChange = (text) => (e) => {
     setFormData({ ...formData, [text]: e.target.value });
@@ -69,7 +67,6 @@ const Forget = () => {
                 <i className="fas fa-user-plus fa 1x w-6  -ml-2" />
                 <span className="ml-3">{formData.textChange}</span>
               </button>
-              {error && <p>{}</p>}
             </form>
           </div>
         </div>
