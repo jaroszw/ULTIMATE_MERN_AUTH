@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import authSvg from '../assests/login.svg';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { authenticate, isAuth } from '../helpers/auth';
 import axios from 'axios';
-import { useNavigate, Link } from 'react-router-dom';
+import { Navigate, Link, useNavigate } from 'react-router-dom';
 import { GoogleLogin } from 'react-google-login';
+import FacebookLogin from 'react-facebook-login/dist/facebook-login-render-props';
 
 const Login = () => {
   const [formData, setFormData] = useState({
@@ -13,8 +14,23 @@ const Login = () => {
     password: '',
     textChange: 'Sign In',
   });
-  const navigate = useNavigate();
   const { email, password } = formData;
+  const navigate = useNavigate();
+
+  const sendFacebookToken = async (userID, accessToken) => {
+    try {
+      const result = await axios.post(
+        `${process.env.REACT_APP_API_URL}/facebooklogin`,
+        {
+          userID,
+          accessToken,
+        }
+      );
+      informParent(result);
+    } catch (error) {
+      toast.error('Facebook login error');
+    }
+  };
 
   const sendGoogleToken = async (tokenId) => {
     try {
@@ -26,10 +42,9 @@ const Login = () => {
       );
 
       informParent(response);
-      console.log('returned response', response);
     } catch (error) {
       console.dir(error);
-      // toast.error(error.response.data.message);
+      toast.error(error.response.data.message);
     }
   };
 
@@ -41,14 +56,13 @@ const Login = () => {
     });
   };
 
-  useEffect(() => {
-    isAuth() !== undefined && navigate('/');
-  }, [navigate]);
-
   const handleChange = (text) => (e) => {
     setFormData({ ...formData, [text]: e.target.value });
   };
 
+  const responseFacebook = (response) => {
+    sendFacebookToken(response.userID, response.accessToken);
+  };
   const responseGoogle = (response) => {
     sendGoogleToken(response.tokenId);
   };
@@ -81,8 +95,9 @@ const Login = () => {
       toast.error('Lorem ipsum dolor');
     }
   };
-
-  return (
+  return isAuth() ? (
+    <Navigate to="/" />
+  ) : (
     <div className="min-h-screen bg-gray-100 text-gray-900 flex justify-center">
       <ToastContainer />
       <div className="max-w-screen-xl m-0 sm:m-20 bg-white shadow sm:rounded-lg flex justify-center flex-1">
@@ -148,7 +163,22 @@ const Login = () => {
                     </button>
                   )}
                 ></GoogleLogin>
-
+                <FacebookLogin
+                  appId={`${process.env.REACT_APP_FACEBOOK_CLIENT}`}
+                  autoLoad={false}
+                  callback={responseFacebook}
+                  render={(renderProps) => (
+                    <button
+                      onClick={renderProps.onClick}
+                      className="w-full max-w-xs font-bold shadow-sm rounded-lg py-3 bg-indigo-100 text-gray-800 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow focus:shadow-sm focus:shadow-outline mt-5"
+                    >
+                      <div className=" p-2 rounded-full ">
+                        <i className="fab fa-facebook" />
+                      </div>
+                      <span className="ml-4">Sign In with Facebook</span>
+                    </button>
+                  )}
+                />
                 <a
                   className="w-full max-w-xs font-bold shadow-sm rounded-lg py-3
            bg-indigo-100 text-gray-800 flex items-center justify-center transition-all duration-300 ease-in-out focus:outline-none hover:shadow focus:shadow-sm focus:shadow-outline mt-5"

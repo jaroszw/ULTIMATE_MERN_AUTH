@@ -7,6 +7,7 @@ const {
   forgotPasswordController,
   resetPasswordController,
   googleController,
+  facebookController,
 } = require('../controllers/auth.controler.js');
 const {
   validSign,
@@ -25,5 +26,6 @@ router.post(
 );
 router.put('/ressetpassword', resetPasswordValidator, resetPasswordController);
 router.post('/googleLogin', googleController);
+router.post('/facebookLogin', facebookController);
 
 module.exports = router;

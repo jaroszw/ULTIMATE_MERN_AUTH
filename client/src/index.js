@@ -8,7 +8,11 @@ import Activate from './screens/Activate';
 import Login from './screens/Login';
 import Forget from './screens/Forget';
 import Register from './screens/Register';
+import Private from './screens/Private';
+import Admin from './screens/Admin';
 import ResetPassword from './screens/ResetPassword';
+import PrivateRoute from './Routes/PrivateRoute';
+import AdminRoute from './Routes/AdminRoute';
 
 ReactDOM.render(
   <BrowserRouter>
@@ -29,8 +33,8 @@ ReactDOM.render(
     </div>
     <Routes>
       <Route path="/" element={<App />} />
-      <Route path="/register" exact element={<Register />} />;
-      <Route path="/login" exact element={<Login />} />;
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} />
       <Route path="/users/password/forget" exact element={<Forget />} />;
       <Route
         path="/users/password/reset/:token"
@@ -39,6 +43,12 @@ ReactDOM.render(
       />
       ;
       <Route path="/users/activation/:token" exact element={<Activate />} />
+      <Route path="/private" element={<PrivateRoute />}>
+        <Route element={<Private />} />
+      </Route>
+      <Route path="/admin" element={<AdminRoute />}>
+        <Route element={<Admin />} />
+      </Route>
     </Routes>
   </BrowserRouter>,
   document.getElementById('root')

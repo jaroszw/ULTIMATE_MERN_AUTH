@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import authSvg from '../assests/auth.svg';
 import { ToastContainer, toast } from 'react-toastify';
 import { isAuth } from '../helpers/auth';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { Navigate } from 'react-router-dom';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -16,15 +16,10 @@ const Register = () => {
   });
 
   const { email, name, password1, password2, textChange } = formData;
-  let navigate = useNavigate();
 
   const handleChange = (text) => (e) => {
     setFormData({ ...formData, [text]: e.target.value });
   };
-
-  useEffect(() => {
-    isAuth() && navigate('../', { replace: true });
-  }, [navigate]);
 
   const hadnleSubmit = async (e) => {
     e.preventDefault();
@@ -60,7 +55,9 @@ const Register = () => {
     }
   };
 
-  return (
+  return isAuth() ? (
+    <Navigate to="/login" />
+  ) : (
     <div className="min-h-screen bg-gray-100 text-gray-900 flex justify-center">
       <ToastContainer />
       <div className="max-w-screen-xl m-0 sm:m-20 bg-white shadow sm:rounded-lg flex justify-center flex-1">

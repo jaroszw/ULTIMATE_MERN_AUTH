@@ -20,6 +20,7 @@
     "express-validator": "^6.13.0",
     "google-auth-library": "^7.10.3",
     "lodash": "^4.17.21",
+    "mkcert": "^1.4.0",
     "mongoose": "^6.1.0",
     "morgan": "^1.10.0",
     "node-fetch": "^2.6.0"

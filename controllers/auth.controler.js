@@ -321,3 +321,46 @@ exports.googleController = async (req, res) => {
     });
   }
 };
+
+exports.facebookController = async (req, res) => {
+  const { userID, accessToken } = req.body;
+
+  try {
+    const url = `https://graph.facebook.com/v2.8/${userID}?fields=id,name,email,picture&access_token=${accessToken}`;
+    console.log(url);
+
+    const response = await fetch(url);
+    const { email, name } = await response.json();
+    let user = await User.findOne({ email });
+
+    if (user) {
+      const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, {
+        expiresIn: '7d',
+      });
+      const { _id, email, name, role } = user;
+      return res.status(200).json({
+        token,
+        user: { _id, email, name, role },
+      });
+    } else {
+      let password = email + process.env.JWT_SECRET;
+      user = new User({ name, email, password });
+
+      const newUser = await user.save();
+      if (newUser) {
+        const token = jwt.sign({ _id: data._id }, process.env.JWT_SECRET, {
+          expiresIn: '7d',
+        });
+        const { _id, email, name, role } = data;
+        return res
+          .status(200)
+          .json({ token, user: { _id, email, name, role } });
+      }
+    }
+  } catch (error) {
+    return res.status(400).json({
+      message: 'Somethinf went wrong try again later',
+      error: error,
+    });
+  }
+};
